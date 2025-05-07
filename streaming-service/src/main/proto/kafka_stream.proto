@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.example.kafkagrpc";
+option java_outer_classname = "KafkaStreamProto";
+
+service KafkaStreamService {
+  rpc StreamMessages (StreamRequest) returns (stream KafkaMessage);
+}
+
+message StreamRequest {
+  string topic = 1;
+}
+
+message KafkaMessage {
+  string key = 1;
+  string value = 2;
+  int64 timestamp = 3;
+  int32 partition = 4;
+  int64 offset = 5;
+}
