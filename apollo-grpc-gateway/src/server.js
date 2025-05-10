@@ -12,19 +12,15 @@ import { PubSub } from 'graphql-subscriptions';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 
-//import typeDefs from './schema/typeDefs.js';
-//import resolvers from './resolvers/index.js';
+import typeDefs from './schema/typeDefs.js';
+import resolvers from './resolvers/index.js';
 
 const PORT = 4000;
 
-// seen in https://github.com/apollographql/docs-examples/blob/main/apollo-server/v4/subscriptions-graphql-ws/src/index.ts
-const pubsub = new PubSub();
-
-// A number that we'll increment over time to simulate subscription events
-let currentNumber = 0;
 
 // Schema definition
-const typeDefs = `#graphql
+/*
+const HellotypeDefs = `#graphql
   type Query {
     currentNumber: Int
   }
@@ -33,21 +29,22 @@ const typeDefs = `#graphql
     numberIncremented: Int
   }
 `;
-
+*/
 // Resolver map
-const resolvers = {
+/*
+const Helloresolvers = {
   Query: {
     currentNumber() {
       return currentNumber;
     },
   },
   Subscription: {
-    numberIncremented: {            
+    numberIncremented: {
       subscribe: () => pubsub.asyncIterableIterator(['NUMBER_INCREMENTED']),
     },
   },
 };
-
+*/
 
 // Create schema, which will be used separately by ApolloServer and
 // the WebSocket server.
@@ -86,9 +83,16 @@ const server = new ApolloServer({
   ],
 });
 
+
 await server.start();
 
-app.use('/graphql', cors(), bodyParser.json(), expressMiddleware(server));
+app.use('/graphql', cors(), bodyParser.json(),
+  expressMiddleware(server, {
+    context: ({ req, res }) => ({
+      token: "my secret token"
+    }),
+  }),
+);
 
 // Now that our HTTP server is fully set up, actually listen.
 httpServer.listen(PORT, () => {
@@ -96,7 +100,7 @@ httpServer.listen(PORT, () => {
   console.log(`🚀 Subscription endpoint ready at ws://localhost:${PORT}/graphql`);
 });
 
-
+/*
 // In the background, increment a number every second and notify subscribers when it changes.
 function incrementNumber() {
   currentNumber++;
@@ -105,4 +109,4 @@ function incrementNumber() {
 }
 
 // Start incrementing
-incrementNumber();
+incrementNumber();*/

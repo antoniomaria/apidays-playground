@@ -33,8 +33,7 @@ const chatProto = grpc.loadPackageDefinition(packageDefinition).chat;
 
 class ChatClient {
   // Seen in https://grpc.io/docs/languages/node/basics/
-  constructor(host = 'localhost:8980') {
-    let cred = grpc.ServerCredentials.createInsecure()
+  constructor(host = 'localhost:8980') {    
     
     this.client = new chatProto.ChatService(
       host,
