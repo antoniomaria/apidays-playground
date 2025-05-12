@@ -14,6 +14,7 @@ import cors from 'cors';
 
 import typeDefs from './schema/typeDefs.js';
 import resolvers from './resolvers/index.js';
+import ChatClient from "./grpc/chatClient.js";
 
 const PORT = 4000;
 
@@ -35,6 +36,8 @@ const wsServer = new WebSocketServer({
 // seen in https://github.com/apollographql/docs-examples/blob/main/apollo-server/v4/subscriptions-graphql-ws/src/index.ts
 const pubsub = new PubSub();
 
+const grpcClient = new ChatClient();
+
 const serverCleanup = useServer({
   schema,
   context: async (context, msg, args) => {
@@ -43,8 +46,9 @@ const serverCleanup = useServer({
     // contextValue, which all of our resolvers have access to.
 
     // pass context to Apollo/GraphQL Subscription subscribe handler (with remote redis)
-    return { 
-      pubsub 
+    return {
+      pubsub,
+      grpcClient
     };
   },
   onDisconnect(context, code, reason) {
@@ -77,9 +81,11 @@ await server.start();
 
 app.use('/graphql', cors(), bodyParser.json(),
   expressMiddleware(server, {
-    context: ({ req, res }) => ({
-      token: "my secret token"
-    }),
+    context: ({ req, res }) => (
+      {
+        grpcClient
+      }
+    ),
   }),
 );
 
@@ -88,14 +94,3 @@ httpServer.listen(PORT, () => {
   console.log(`🚀 Query endpoint ready at http://localhost:${PORT}/graphql`);
   console.log(`🚀 Subscription endpoint ready at ws://localhost:${PORT}/graphql`);
 });
-
-/*
-// In the background, increment a number every second and notify subscribers when it changes.
-function incrementNumber() {
-  currentNumber++;
-  pubsub.publish('NUMBER_INCREMENTED', { numberIncremented: currentNumber });
-  setTimeout(incrementNumber, 1000);
-}
-
-// Start incrementing
-incrementNumber();*/
