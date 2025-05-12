@@ -17,35 +17,6 @@ import resolvers from './resolvers/index.js';
 
 const PORT = 4000;
 
-
-// Schema definition
-/*
-const HellotypeDefs = `#graphql
-  type Query {
-    currentNumber: Int
-  }
-
-  type Subscription {
-    numberIncremented: Int
-  }
-`;
-*/
-// Resolver map
-/*
-const Helloresolvers = {
-  Query: {
-    currentNumber() {
-      return currentNumber;
-    },
-  },
-  Subscription: {
-    numberIncremented: {
-      subscribe: () => pubsub.asyncIterableIterator(['NUMBER_INCREMENTED']),
-    },
-  },
-};
-*/
-
 // Create schema, which will be used separately by ApolloServer and
 // the WebSocket server.
 const schema = makeExecutableSchema({ typeDefs, resolvers });
@@ -61,7 +32,25 @@ const wsServer = new WebSocketServer({
   path: '/graphql',
 });
 
-const serverCleanup = useServer({ schema }, wsServer);
+// seen in https://github.com/apollographql/docs-examples/blob/main/apollo-server/v4/subscriptions-graphql-ws/src/index.ts
+const pubsub = new PubSub();
+
+const serverCleanup = useServer({
+  schema,
+  context: async (context, msg, args) => {
+    console.log("Creating a ws-socket context")
+    // Returning an object will add that information to
+    // contextValue, which all of our resolvers have access to.
+
+    // pass context to Apollo/GraphQL Subscription subscribe handler (with remote redis)
+    return { 
+      pubsub 
+    };
+  },
+  onDisconnect(context, code, reason) {
+    console.log('Disconnected! ');
+  },
+}, wsServer);
 
 // Set up ApolloServer.
 const server = new ApolloServer({

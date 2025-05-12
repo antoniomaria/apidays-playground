@@ -8,9 +8,17 @@ package chat;
 
 service ChatService {
   rpc join(stream ChatMessage) returns (stream ChatMessage);
+  rpc JoinChat(Connect) returns (stream ChatMessage);
+  rpc BroadcastMessage(ChatMessage) returns (Close);
 }
 
 message ChatMessage {
   string from = 1;
   string message = 2;
 }
+
+message Connect {
+  string user = 1;
+}
+
+message Close {}

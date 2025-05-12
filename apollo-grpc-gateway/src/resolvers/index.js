@@ -4,14 +4,14 @@ import ChatClient from "../grpc/chatClient.js";
 import { PubSub } from 'graphql-subscriptions';
 
 // seen in https://github.com/apollographql/docs-examples/blob/main/apollo-server/v4/subscriptions-graphql-ws/src/index.ts
-const pubsub = new PubSub();
+//const pubsub = new PubSub();
 
 const chatClient = new ChatClient();
 
 const resolvers = {
   Query: {
     ping:  (parent, args, context) => {
-      console.log("my winner context is " , context )      
+      console.log("Query ping  context is: " , context )      
       return 'pong';}
   },
   Mutation: {
@@ -28,9 +28,14 @@ const resolvers = {
   },
   Subscription: {
     messageReceived: {
+      unsubscribe: () => {
+        console.log("bye bye")
+      },
       
-      subscribe: (parent, args, context) => {        
-        console.log("my winner context is " , context )                
+      subscribe: (parent, args, context) => {    
+        console.log("Subscription messageReceived called ", )                
+
+        const pubsub = context.pubsub                    
         
         // Setup gRPC subscription
         const grpcCall = chatClient.subscribeToMessages((err, message) => {
@@ -43,17 +48,10 @@ const resolvers = {
 
         // Return async iterator
         const asyncIterator = pubsub.asyncIterableIterator(['MESSAGE_RECEIVED']);
+        // TODO Somehow close the grcp connection when client unsubscribes
+        // grpcCall.cancel();
 
-        return asyncIterator
-        // Cleanup when client unsubscribes
-        /*
-        return {
-          ...asyncIterator,
-          return: () => {
-            grpcCall.cancel();
-            return asyncIterator.return();
-          },
-        }; */
+        return asyncIterator                
       },
     },
   },
