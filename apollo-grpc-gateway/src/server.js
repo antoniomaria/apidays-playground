@@ -10,13 +10,13 @@ import { WebSocketServer } from 'ws';
 import { useServer } from 'graphql-ws/use/ws';
 import { PubSub } from 'graphql-subscriptions';
 import bodyParser from 'body-parser';
+import cors from 'cors';
+
 import typeDefs from './schema/typeDefs.js';
 import resolvers from './resolvers/index.js';
+import ChatClient from "./grpc/chatClient.js";
 
 const PORT = 4000;
-
-// seen in https://github.com/apollographql/docs-examples/blob/main/apollo-server/v4/subscriptions-graphql-ws/src/index.ts
-const pubsub = new PubSub();
 
 // Create schema, which will be used separately by ApolloServer and
 // the WebSocket server.
@@ -33,7 +33,28 @@ const wsServer = new WebSocketServer({
   path: '/graphql',
 });
 
-const serverCleanup = useServer({ schema }, wsServer);
+// seen in https://github.com/apollographql/docs-examples/blob/main/apollo-server/v4/subscriptions-graphql-ws/src/index.ts
+const pubsub = new PubSub();
+
+const grpcClient = new ChatClient();
+
+const serverCleanup = useServer({
+  schema,
+  context: async (context, msg, args) => {
+    console.log("Creating a ws-socket context")
+    // Returning an object will add that information to
+    // contextValue, which all of our resolvers have access to.
+
+    // pass context to Apollo/GraphQL Subscription subscribe handler (with remote redis)
+    return {
+      pubsub,
+      grpcClient
+    };
+  },
+  onDisconnect(context, code, reason) {
+    console.log('Disconnected! ');
+  },
+}, wsServer);
 
 // Set up ApolloServer.
 const server = new ApolloServer({
@@ -55,11 +76,21 @@ const server = new ApolloServer({
   ],
 });
 
+
 await server.start();
+
+app.use('/graphql', cors(), bodyParser.json(),
+  expressMiddleware(server, {
+    context: ({ req, res }) => (
+      {
+        grpcClient
+      }
+    ),
+  }),
+);
 
 // Now that our HTTP server is fully set up, actually listen.
 httpServer.listen(PORT, () => {
   console.log(`🚀 Query endpoint ready at http://localhost:${PORT}/graphql`);
   console.log(`🚀 Subscription endpoint ready at ws://localhost:${PORT}/graphql`);
 });
-
