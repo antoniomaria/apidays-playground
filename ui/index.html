@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Airbus A321 Seat Map</title>
+    <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .cabin {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .row {
+      display: flex;
+      margin: 3px 0;
+    }
+
+    .seat {
+      width: 30px;
+      height: 30px;
+      margin: 2px;
+      background-color: #d3d3d3;
+      text-align: center;
+      line-height: 30px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .seat.aisle {
+      visibility: hidden;
+    }
+
+    .seat.business {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .seat.economy {
+      background-color: #2196F3;
+      color: white;
+    }
+
+    .legend {
+      margin-top: 20px;
+    }
+
+    .legend span {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+<h1>Airbus A321 Seat Map</h1>
+<div class="cabin">
+    <!-- Business Class (Rows 1-4) -->
+    <h3>Business Class</h3>
+    <!-- 2-2 layout -->
+    <div class="row"><div class="seat business">1A</div><div class="seat business">1C</div><div class="seat aisle"></div><div class="seat business">1D</div><div class="seat business">1F</div></div>
+    <div class="row"><div class="seat business">2A</div><div class="seat business">2C</div><div class="seat aisle"></div><div class="seat business">2D</div><div class="seat business">2F</div></div>
+    <div class="row"><div class="seat business">3A</div><div class="seat business">3C</div><div class="seat aisle"></div><div class="seat business">3D</div><div class="seat business">3F</div></div>
+    <div class="row"><div class="seat business">4A</div><div class="seat business">4C</div><div class="seat aisle"></div><div class="seat business">4D</div><div class="seat business">4F</div></div>
+
+    <!-- Economy Class (Rows 5-30) -->
+    <h3>Economy Class</h3>
+    <!-- 3-3 layout -->
+    <!-- Example for 5 rows, replicate as needed -->
+    <div class="row"><div class="seat economy">5A</div><div class="seat economy">5B</div><div class="seat economy">5C</div><div class="seat aisle"></div><div class="seat economy">5D</div><div class="seat economy">5E</div><div class="seat economy">5F</div></div>
+    <div class="row"><div class="seat economy">6A</div><div class="seat economy">6B</div><div class="seat economy">6C</div><div class="seat aisle"></div><div class="seat economy">6D</div><div class="seat economy">6E</div><div class="seat economy">6F</div></div>
+    <div class="row"><div class="seat economy">7A</div><div class="seat economy">7B</div><div class="seat economy">7C</div><div class="seat aisle"></div><div class="seat economy">7D</div><div class="seat economy">7E</div><div class="seat economy">7F</div></div>
+    <div class="row"><div class="seat economy">8A</div><div class="seat economy">8B</div><div class="seat economy">8C</div><div class="seat aisle"></div><div class="seat economy">8D</div><div class="seat economy">8E</div><div class="seat economy">8F</div></div>
+    <div class="row"><div class="seat economy">9A</div><div class="seat economy">9B</div><div class="seat economy">9C</div><div class="seat aisle"></div><div class="seat economy">9D</div><div class="seat economy">9E</div><div class="seat economy">9F</div></div>
+    <!-- Add more rows as needed -->
+
+    <!-- Legend -->
+    <div class="legend">
+        <p><span style="background-color:#4CAF50"></span> Business Class</p>
+        <p><span style="background-color:#2196F3"></span> Economy Class</p>
+    </div>
+</div>
+</body>
+</html>
