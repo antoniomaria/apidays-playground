@@ -1,0 +1,1 @@
+https://the-guild.dev/graphql/sse/get-started#create-a-graphql-schema
