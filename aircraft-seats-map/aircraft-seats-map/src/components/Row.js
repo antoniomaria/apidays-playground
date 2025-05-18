@@ -8,7 +8,7 @@ const Row = ({ letters, rowNumber }) => {
       data-line={rowNumber}
     >
       {letters.map((letter, index) => (
-        <Seat key={index} letter={letter} />
+        <Seat key={index} seatNumber={index} letter={letter} />
       ))}
     </div>
   );
