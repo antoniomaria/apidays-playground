@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GraphQL SSE Client</title>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/graphql-sse@latest/+esm';
+
+    const client = createClient({
+      url: 'http://localhost:3000/graphql/stream',
+    });
+
+    async function executeQuery() {
+      const query = client.iterate({
+        query: '{ hello }',
+      });
+
+      for await (const result of query) {
+        console.log('Query result:', result);
+        const queryResultElement = document.getElementById('query-result');
+        const resultItem = document.createElement('div');
+        resultItem.textContent = JSON.stringify(result, null, 2);
+        queryResultElement.appendChild(resultItem);
+      }
+    }
+
+    async function executeSubscription() {
+      const subscription = client.iterate({
+        query: 'subscription { greetings }',
+      });
+
+      for await (const event of subscription) {
+        console.log('Subscription event:', event);
+        const subscriptionEventElement = document.getElementById('subscription-event');
+        const eventItem = document.createElement('div');
+        eventItem.textContent = JSON.stringify(event, null, 2);
+        subscriptionEventElement.appendChild(eventItem);
+      }
+    }
+
+    window.onload = () => {
+     // executeQuery();
+      executeSubscription();
+    };
+  </script>
+</head>
+<body>
+  <h1>GraphQL SSE Client</h1>
+  <h2>Query Results:</h2>
+  <div id="query-result"></div>
+  <h2>Subscription Events:</h2>
+  <div id="subscription-event"></div>
+</body>
+</html>
