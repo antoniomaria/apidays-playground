@@ -1,4 +1,5 @@
 import React from 'react';
+import Seat from './Seat';
 
 const Row = ({ letters, rowNumber }) => {
   return (
@@ -7,11 +8,7 @@ const Row = ({ letters, rowNumber }) => {
       data-line={rowNumber}
     >
       {letters.map((letter, index) => (
-        <div
-          key={index}
-          data-letter={letter}
-          className={`${letter === 'A' || letter === 'B' || letter === 'C' ? 'active' : 'empty'} seat`}
-        ></div>
+        <Seat key={index} letter={letter} />
       ))}
     </div>
   );
