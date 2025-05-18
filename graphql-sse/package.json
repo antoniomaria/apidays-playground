@@ -10,6 +10,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@graphql-tools/schema": "^10.0.23",
     "express": "^5.1.0",
     "graphql": "^16.11.0",
     "graphql-sse": "^2.5.4"
