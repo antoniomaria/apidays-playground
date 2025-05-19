@@ -1,17 +1,39 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { gql, useSubscription } from '@apollo/client';
 
-const Seat = ({ seatNumber, letter }) => {
-  const [isActive, setIsActive] = useState(false); // Initial state is false
+const SEAT_STATUS_SUBSCRIPTION = gql`
+  subscription Subscription {
+    seatStatusUpdated {
+      seatLetter
+      rowNumber
+      occupied
+    }
+  }
+`;
 
-  const toggleSeat = () => {
-    setIsActive((prevState) => !prevState); // Toggle active state
-  };
+const Seat = ({ rowNumber, seatLetter }) => {
+  const [isOccupied, setIsOccupied] = useState(false);
 
-  return (    
+  const { loading, error, data } = useSubscription(SEAT_STATUS_SUBSCRIPTION);
+
+  useEffect(() => {
+    console.log('Subscription data:', data);
+    console.log('Row number:', rowNumber);
+    console.log('Seat letter:', seatLetter);
+    if (
+      data &&
+      data.seatStatusUpdated &&
+      data.seatStatusUpdated.rowNumber === rowNumber &&
+      data.seatStatusUpdated.seatLetter === seatLetter
+    ) {
+      setIsOccupied(data.seatStatusUpdated.occupied);
+    }
+  }, [data, rowNumber, seatLetter]);
+
+  return (
     <div
-      data-letter={letter}
-      className={`${isActive ? 'active' : 'empty'} seat`}
-      onClick={toggleSeat} // Toggle seat state on click
+      data-letter={seatLetter}
+      className={`${isOccupied ? 'active' : 'empty'} seat`}
     ></div>
   );
 };
