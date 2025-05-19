@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 
-const Seat = ({ letter }) => {
+const Seat = ({ seatNumber, letter }) => {
   const [isActive, setIsActive] = useState(false); // Initial state is false
 
   const toggleSeat = () => {
     setIsActive((prevState) => !prevState); // Toggle active state
   };
 
-  return (
+  return (    
     <div
       data-letter={letter}
       className={`${isActive ? 'active' : 'empty'} seat`}
