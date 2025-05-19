@@ -35,6 +35,6 @@ const yoga = createYoga({ schema });
 const server = createServer(yoga);
 
 // Start the server and you're done!
-server.listen(4000, () => {
-  console.info('Server is running on http://localhost:4000/graphql');
+server.listen(5000, () => {
+  console.info('Server is running on http://localhost:5000/graphql');
 });

@@ -45,7 +45,7 @@ const schema = makeExecutableSchema({
 const handler = createHandler({ schema });
 
 const app = express();
-const port = 3000;
+const port = 6000;
 
 // Resolve the directory name for ES modules
 const __filename = fileURLToPath(import.meta.url);
