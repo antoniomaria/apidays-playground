@@ -4,7 +4,7 @@
   "description": "A React application for visualizing aircraft seat layouts.",
   "main": "src/index.js",
   "scripts": {
-    "start": "react-scripts --openssl-legacy-provider start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
