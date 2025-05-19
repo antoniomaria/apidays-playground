@@ -14,7 +14,7 @@ import cors from 'cors';
 
 import typeDefs from './schema/typeDefs.js';
 import resolvers from './resolvers/index.js';
-import ChatClient from "./grpc/chatClient.js";
+import AircraftSeatsClient from "./grpc/aircraftSeatsClient.js";
 
 const PORT = 4000;
 
@@ -36,7 +36,7 @@ const wsServer = new WebSocketServer({
 // seen in https://github.com/apollographql/docs-examples/blob/main/apollo-server/v4/subscriptions-graphql-ws/src/index.ts
 const pubsub = new PubSub();
 
-const grpcClient = new ChatClient();
+const grpcClient = new AircraftSeatsClient();
 
 const serverCleanup = useServer({
   schema,
