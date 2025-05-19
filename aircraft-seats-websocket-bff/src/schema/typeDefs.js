@@ -1,20 +1,22 @@
 const typeDefs = `#graphql
-  type Message {
-    from: String!
-    message: String!
+  type SeatStatus {
+    rowNumber: Int!
+    seatLetter: String!
+    occupied: Boolean!
   }
 
   type Query {
     # Placeholder for any queries you might need
     ping: String
+    seatStatus(rowNumber: Int!, seatLetter: String!): SeatStatus
   }
 
   type Mutation {
-    sendMessage(from: String!, message: String!): Boolean
+    updateSeatStatus(rowNumber: Int!, seatLetter: String, occupied: Boolean!): Boolean
   }
 
   type Subscription {
-    messageReceived: Message
+    seatStatusUpdated: SeatStatus
   }
 `;
 

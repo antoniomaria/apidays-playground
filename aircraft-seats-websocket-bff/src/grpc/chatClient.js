@@ -10,7 +10,7 @@ import { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const PROTO_PATH = __dirname + '/../../proto/chat.proto';
+const PROTO_PATH = __dirname + '/../../proto/aircraft_seats_service.proto';
 
 const packageDefinition = loadSync(PROTO_PATH, {
   keepCase: true,
