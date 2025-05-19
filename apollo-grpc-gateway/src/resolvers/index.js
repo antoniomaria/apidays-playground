@@ -17,11 +17,7 @@ const resolvers = {
     },
   },
   Subscription: {
-    messageReceived: {
-      unsubscribe: () => {
-        console.log("bye bye")
-      },
-      
+    messageReceived: {            
       subscribe: (parent, args, contextValue) => {    
         console.log("Subscription messageReceived called ", )                
         const { grpcClient, pubsub } = contextValue;        
