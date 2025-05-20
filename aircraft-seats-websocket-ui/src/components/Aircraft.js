@@ -1,6 +1,5 @@
 import React from 'react';
-import LeftWingSeats from './LeftWingSeats';
-import RightWingSeats from './RightWingSeats';
+import WingSeats from './WingSeats';
 
 const Aircraft = () => {
   return (
@@ -12,8 +11,10 @@ const Aircraft = () => {
         <div className="top-right-exists">
           <img src="https://i.ibb.co/ftwgLCL/exist.png" alt="" />
         </div>
-        <RightWingSeats />
-        <LeftWingSeats />
+        {/* Left Wing Seats */}
+        <WingSeats rowCount={35} letters={['A', 'B', 'C']} showRowNumber={false} />
+        {/* Right Wing Seats */}
+        <WingSeats rowCount={35} letters={['D', 'E', 'F']} showRowNumber={true} />
         <div className="bottom-left-exists">
           <img src="https://i.ibb.co/ftwgLCL/exist.png" alt="" />
         </div>
