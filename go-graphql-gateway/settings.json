@@ -1,0 +1,9 @@
+{
+    "go.useLanguageServer": true,
+    "go.toolsManagement.autoUpdate": true,
+    "go.formatTool": "goimports",
+    "go.lintTool": "golangci-lint",
+    "editor.formatOnSave": true,
+    "go.buildOnSave": "workspace",
+    "go.vetOnSave": "workspace"
+}
