@@ -1,50 +1,11 @@
-antonio.sanchez@G680077 ~ % nvm install latest
-Version 'latest' not found - try `nvm ls-remote` to browse available versions.
-antonio.sanchez@G680077 ~ % nvm install node --latest-npm
-Downloading and installing node v24.1.0...
-Downloading https://nodejs.org/dist/v24.1.0/node-v24.1.0-darwin-arm64.tar.xz...
-###################################################################################################################################################################### 100.0%
-Computing checksum with sha256sum
-Checksums matched!
-Now using node v24.1.0 (npm v11.3.0)
-Creating default alias: default -> node (-> v24.1.0)
+Generate self signed certificate
 
-https://markaicode.com/node-js-http3-quic-implementation-guide/
+openssl req -x509 -newkey rsa:4096 -sha256 -days 365 -nodes \
+  -keyout server.key -out server.crt \
+  -subj "/CN=localhost" \
+  -addext "subjectAltName=DNS:localhost"
 
-
-
-# Check your Node.js version
-node --version
-
-# Install required packages
-npm install node-quic http3-js
-
-
-https://nearform.com/insights/a-quic-update-for-node-js/
-
-
-node quic support:
-https://nodejs.org/download/release/v15.5.0/docs/api/quic.html
-
-
-Install latest Node.js Nightly
-
-NVM_NODEJS_ORG_MIRROR=https://nodejs.org/download/nightly/ nvm i node
-
-si:
-https://nodejs.org/download/nightly/v24.0.0-nightly202502081b2d2f7e68/docs/api/
-
-si:
-
-https://nodejs.org/download//release/v15.7.0/docs/api/quic.html
-
-
-nvm install v24.0.0-nightly202502081b2d2f7e68
-
-mvn use v24.0.0-nightly202502081b2d2f7e68
-nvm use nightly|rc
-
-
+  
 more bloat:
 
 𝐖𝐡𝐲 𝐃𝐢𝐝 𝐇𝐓𝐓𝐏/3 𝐄𝐯𝐞𝐧 𝐇𝐚𝐩𝐩𝐞𝐧?
