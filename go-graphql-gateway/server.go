@@ -1,27 +1,28 @@
 package main
 
 import (
-	"graphql-gateway/graph"
-	"log"
-	"net/http"	
+	"crypto/tls"
 	"flag"
 	"fmt"
-	"github.com/quic-go/quic-go/http3"
-	"crypto/tls"
+	"graphql-gateway/graph"
+	"log"
+	"net/http"
+
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/lru"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/quic-go/quic-go/http3"
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
-
-
 func main() {
-	// Command-line flags for address and port
+	// Command-line flags for address, port, certificate, and key
 	addr := flag.String("address", "0.0.0.0", "server address")
 	port := flag.Int("port", 443, "server port")
+	certFile := flag.String("cert", "_wildcard.app.lan+3.pem", "TLS certificate file")
+	keyFile := flag.String("key", "_wildcard.app.lan+3-key.pem", "TLS key file")
 	flag.Parse()
 
 	listenAddr := fmt.Sprintf("%s:%d", *addr, *port)
@@ -42,14 +43,11 @@ func main() {
 	mux := http.NewServeMux()
 	mux.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	mux.Handle("/query", graphqlHandler)
-	
+
 	log.Printf("connect to https://%s/ for GraphQL playground", listenAddr)
 
 	// TLS configuration with proper ALPN
-	tlsCertFile := "./_wildcard.app.lan+3.pem"
-	tlsKeyFile := "./_wildcard.app.lan+3-key.pem"
-
-	cert, err := tls.LoadX509KeyPair(tlsCertFile, tlsKeyFile)
+	cert, err := tls.LoadX509KeyPair(*certFile, *keyFile)
 	if err != nil {
 		log.Fatalf("failed to load TLS certificate: %v", err)
 	}

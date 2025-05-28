@@ -8,26 +8,67 @@ import (
 	"context"
 	"fmt"
 	"graphql-gateway/graph/model"
+	"sync"
+)
+
+// In-memory seat map for demonstration purposes
+var (
+	seatMap   = make(map[string]*model.SeatStatus)
+	seatMapMu sync.Mutex
 )
 
 // UpdateSeatStatus is the resolver for the updateSeatStatus field.
 func (r *mutationResolver) UpdateSeatStatus(ctx context.Context, rowNumber int32, seatLetter *string, occupied bool) (*bool, error) {
-	panic(fmt.Errorf("not implemented: UpdateSeatStatus - updateSeatStatus"))
+	if seatLetter == nil {
+		return nil, fmt.Errorf("seatLetter cannot be nil")
+	}
+	key := fmt.Sprintf("%d-%s", rowNumber, *seatLetter)
+	seatMapMu.Lock()
+	defer seatMapMu.Unlock()
+	seatMap[key] = &model.SeatStatus{
+		RowNumber:  rowNumber,
+		SeatLetter: *seatLetter,
+		Occupied:   occupied,
+	}
+	result := true
+	return &result, nil
 }
 
 // Ping is the resolver for the ping field.
 func (r *queryResolver) Ping(ctx context.Context) (*string, error) {
-	panic(fmt.Errorf("not implemented: Ping - ping"))
+	msg := "pong"
+	return &msg, nil
 }
 
 // SeatStatus is the resolver for the seatStatus field.
 func (r *queryResolver) SeatStatus(ctx context.Context, rowNumber int32, seatLetter string) (*model.SeatStatus, error) {
-	panic(fmt.Errorf("not implemented: SeatStatus - seatStatus"))
+	key := fmt.Sprintf("%d-%s", rowNumber, seatLetter)
+	seatMapMu.Lock()
+	defer seatMapMu.Unlock()
+	if seat, ok := seatMap[key]; ok {
+		return seat, nil
+	}
+	// If not found, return a default unoccupied seat
+	return &model.SeatStatus{
+		RowNumber:  rowNumber,
+		SeatLetter: seatLetter,
+		Occupied:   false,
+	}, nil
 }
 
 // SeatStatusUpdated is the resolver for the seatStatusUpdated field.
 func (r *subscriptionResolver) SeatStatusUpdated(ctx context.Context) (<-chan *model.SeatStatus, error) {
-	panic(fmt.Errorf("not implemented: SeatStatusUpdated - seatStatusUpdated"))
+	// For demonstration, this will just send a dummy update and close the channel.
+	ch := make(chan *model.SeatStatus, 1)
+	go func() {
+		defer close(ch)
+		ch <- &model.SeatStatus{
+			RowNumber:  1,
+			SeatLetter: "A",
+			Occupied:   true,
+		}
+	}()
+	return ch, nil
 }
 
 // Mutation returns MutationResolver implementation.
@@ -42,18 +83,3 @@ func (r *Resolver) Subscription() SubscriptionResolver { return &subscriptionRes
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type subscriptionResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//    it when you're done.
-//  - You have helper methods in this file. Move them out to keep these resolver files clean.
-/*
-	func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: CreateTodo - createTodo"))
-}
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: Todos - todos"))
-}
-*/
