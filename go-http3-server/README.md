@@ -23,3 +23,14 @@ This project is a demonstration server written in Go that supports both **HTTP/2
 ```sh
 git clone <repository-url>
 cd go-http3-server
+
+network.http.http3.disable_when_third_party_roots_found
+https://www.reddit.com/r/nginx/comments/18ah617/unable_to_get_http3_working_with_browsers/
+
+
+https://github.com/mozilla/neqo/blob/main/README.md
+    Run neqo-server via cargo run --bin neqo-server -- 'localhost:12345' --db ./test-fixture/db.
+    On Firefox, set about:config preferences:
+
+    network.http.http3.alt-svc-mapping-for-testing to localhost;h3=":12345"
+    network.http.http3.disable_when_third_party_roots_found to false

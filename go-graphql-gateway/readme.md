@@ -1,10 +1,6 @@
 Generate self signed certificate
 
-openssl req -x509 -newkey rsa:4096 -sha256 -days 365 -nodes \
-  -keyout server.key -out server.crt \
-  -subj "/CN=localhost" \
-  -addext "subjectAltName=DNS:localhost"
-
+mkcert "*.app.lan" "*.app.test" "*.app.invalid" "*.app.example"
   
 more bloat:
 
@@ -45,4 +41,15 @@ HTTP/3 completely 𝐝𝐢𝐭𝐜𝐡𝐞𝐬 𝐓𝐂𝐏 and runs on 𝐐𝐔
 quic node support status
 
 https://github.com/nodejs/node/issues/57281
+
+
+go mod init graphql-gateway  
+
+go run github.com/99designs/gqlgen init
+
+edit genereated schema.graphqls
+
+run again:
+
+go run github.com/99designs/gqlgen 
 
