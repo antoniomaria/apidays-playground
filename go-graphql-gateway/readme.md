@@ -53,3 +53,5 @@ run again:
 
 go run github.com/99designs/gqlgen 
 
+go get github.com/quic-go/quic-go/http3
+
