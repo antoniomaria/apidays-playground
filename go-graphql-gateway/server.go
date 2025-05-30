@@ -14,6 +14,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/quic-go/quic-go/http3"
+	"github.com/rs/cors"
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
@@ -44,6 +45,18 @@ func main() {
 	mux.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	mux.Handle("/query", graphqlHandler)
 
+	// Add CORS middleware with localhost allowed
+	corsHandler := cors.New(cors.Options{
+		AllowedOrigins: []string{
+			"http://localhost",
+			"http://localhost:3000",						
+			"https://localhost:3000",			
+			"https://graphql-gateway.app.lan:4444",
+		},
+		AllowCredentials: true,
+	}).Handler(mux)
+	
+
 	log.Printf("connect to https://%s/ for GraphQL playground", listenAddr)
 
 	// TLS configuration with proper ALPN
@@ -58,31 +71,28 @@ func main() {
 		Certificates: []tls.Certificate{cert},
 	}
 
-	http3 := &http3.Server{
+	http3Server := &http3.Server{
 		Addr:      listenAddr,
 		TLSConfig: tlsConfig,
-		Handler:   mux,
+		Handler:   corsHandler, // Use CORS handler here
 	}
 
 	log.Printf("HTTP/2 server listening on https://%s", listenAddr)
 	log.Printf("HTTP/3 server listening on https://%s", listenAddr)
 
-	// handle http2 for browsers that don't yet support HTTP/3 and add QUIC endpoint headers
 	go func() {
 		http2 := &http.Server{
 			Addr:      listenAddr,
 			TLSConfig: tlsConfig,
 			Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				err = http3.SetQUICHeaders(w.Header())
+				err = http3Server.SetQUICHeaders(w.Header())
 				if err != nil {
 					log.Fatal(err)
 				}
-				mux.ServeHTTP(w, r)
+				corsHandler.ServeHTTP(w, r) // Use CORS handler here
 			}),
 		}
 		log.Fatal(http2.ListenAndServeTLS("", "")) // empty cert and key because we use the same TLS config
 	}()
-	// start http3 server
-	log.Fatal(http3.ListenAndServe())
-	
+	log.Fatal(http3Server.ListenAndServe())
 }

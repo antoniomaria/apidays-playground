@@ -54,7 +54,7 @@ ping -c 1 graphql-gateway.app.lan
 go run server.go -address=0.0.0.0 -port=4444 -cert=_wildcard.app.lan+3.pem -key=_wildcard.app.lan+3-key.pem
 ```
 
-- The server will be available at: [https://graphql-gateway.app.lan:4444/](https://graphql-gateway.app.lan:4446/)
+- The server will be available at: [https://graphql-gateway.app.lan:4444/](https://graphql-gateway.app.lan:4444/)
 - Open the URL in your browser and accept the certificate warning if prompted.
 
 
