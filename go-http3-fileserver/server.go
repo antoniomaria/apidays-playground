@@ -13,7 +13,7 @@ func main() {
 	// Command-line flags for address and port
 	addr := flag.String("address", "0.0.0.0", "server address")
 	port := flag.Int("port", 4445, "server port")
-	serveRoot := flag.String("root", "/Users/antonio.sanchez/git/apidays-playground/go-http3-fileserver/html", "Root of path to serve under https://127.0.0.1/files/")
+	serveRoot := flag.String("www", "/Users/antonio.sanchez/git/apidays-playground/go-http3-fileserver/html", "Root of path to serve under https://127.0.0.1/files/")
 	
 	flag.Parse()
 
