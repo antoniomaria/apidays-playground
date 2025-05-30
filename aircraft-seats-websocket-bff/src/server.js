@@ -5,7 +5,6 @@ import express from 'express';
 import { createServer } from 'http';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { WebSocketServer } from 'ws';
-
 // Seen in https://the-guild.dev/graphql/ws/get-started
 import { useServer } from 'graphql-ws/use/ws';
 import { PubSub } from 'graphql-subscriptions';
