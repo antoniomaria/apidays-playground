@@ -21,7 +21,7 @@ import (
 func main() {
 	// Command-line flags for address, port, certificate, and key
 	addr := flag.String("address", "0.0.0.0", "server address")
-	port := flag.Int("port", 443, "server port")
+	port := flag.Int("port", 4444, "server port")
 	certFile := flag.String("cert", "_wildcard.app.lan+3.pem", "TLS certificate file")
 	keyFile := flag.String("key", "_wildcard.app.lan+3-key.pem", "TLS key file")
 	flag.Parse()
@@ -42,8 +42,8 @@ func main() {
 	})
 
 	mux := http.NewServeMux()
-	mux.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	mux.Handle("/query", graphqlHandler)
+	mux.Handle("/", playground.Handler("GraphQL playground", "/graphql"))
+	mux.Handle("/graphql", graphqlHandler)
 
 	// Add CORS middleware with localhost allowed
 	corsHandler := cors.New(cors.Options{
@@ -51,7 +51,7 @@ func main() {
 			"http://localhost",
 			"http://localhost:3000",						
 			"https://localhost:3000",			
-			"https://graphql-gateway.app.lan:4444",
+			"https://aircraft-seat-reservation.app.lan:4445",
 		},
 		AllowCredentials: true,
 	}).Handler(mux)

@@ -10,7 +10,7 @@ import { getMainDefinition } from '@apollo/client/utilities';
 
 
 const httpLink = new HttpLink({
-  uri: 'https://graphql-gateway.app.lan:4444/query', // our go graphql appliation
+  uri: 'https://graphql-gateway.app.lan:4444/graphql', // our go graphql appliation
 });
 
 const wsLink = new GraphQLWsLink(createClient({
