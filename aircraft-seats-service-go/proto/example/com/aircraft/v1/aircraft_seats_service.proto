@@ -1,0 +1,70 @@
+syntax = "proto3";
+package example.com.aircraft.v1;
+
+//option go_package = "example.com/aircraftpb";
+
+
+
+// Service definition
+service AircraftSeatsService {
+  // Fetches the status of a specific seat based on row number and seat letter.
+  rpc GetSeatStatus(SeatStatusRequest) returns (SeatStatusResponse);
+
+  // Updates the status of a specific seat (occupied or not) based on row number and seat letter.
+  rpc UpdateSeatStatus(UpdateSeatStatusRequest) returns (UpdateSeatStatusResponse);
+
+  // Subscribes to real-time updates for seat statuses. Streams updates as they occur.
+  rpc SubscribeToSeatStatusUpdates(SeatStatusSubscriptionRequest) returns (stream SeatStatus);
+}
+
+// Request and response messages
+message SeatStatusRequest {
+  // The row number of the seat to query.
+  int32 rowNumber = 1;
+
+  // The letter of the seat to query.
+  string seatLetter = 2;
+}
+
+message SeatStatusResponse {
+  // The row number of the seat.
+  int32 rowNumber = 1;
+
+  // The letter of the seat.
+  string seatLetter = 2;
+
+  // Whether the seat is occupied.
+  bool occupied = 3;
+}
+
+message UpdateSeatStatusRequest {
+  // The row number of the seat to update.
+  int32 rowNumber = 1;
+
+  // The letter of the seat to update.
+  string seatLetter = 2;
+
+  // The new occupied status of the seat.
+  bool occupied = 3;
+}
+
+message UpdateSeatStatusResponse {
+  // Indicates whether the update was successful.
+  bool success = 1;
+}
+
+message SeatStatusSubscriptionRequest {
+  // Empty request for subscribing to seat status updates.
+}
+
+message SeatStatus {
+  // The row number of the seat.
+  int32 rowNumber = 1;
+
+  // The letter of the seat.
+  string seatLetter = 2;
+
+  // Whether the seat is occupied.
+  bool occupied = 3;
+}
+
