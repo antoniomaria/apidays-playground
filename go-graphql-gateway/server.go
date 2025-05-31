@@ -7,6 +7,7 @@ import (
 	"graphql-gateway/graph"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
@@ -30,6 +31,18 @@ func main() {
 
 	graphqlHandler := handler.New(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
 
+	graphqlHandler.AddTransport(transport.SSE{
+		// Load balancers, proxies, or firewalls often have idle timeout
+		// settings that specify the maximum duration a connection can
+		// remain open without data being sent across it. If the idle
+		// timeout is exceeded without any data being transmitted, the
+		// connection may be closed when connecting SSE over HTTP/1.
+		//
+		// End-to-end HTTP/2 connections do not require a ping interval
+		// to keep the connection open.
+		KeepAlivePingInterval: 10 * time.Second,
+	}) // Add SSE first.
+
 	graphqlHandler.AddTransport(transport.Options{})
 	graphqlHandler.AddTransport(transport.GET{})
 	graphqlHandler.AddTransport(transport.POST{})
@@ -47,15 +60,21 @@ func main() {
 
 	// Add CORS middleware with localhost allowed
 	corsHandler := cors.New(cors.Options{
-		AllowedOrigins: []string{
-			"http://localhost",
-			"http://localhost:3000",						
-			"https://localhost:3000",			
-			"https://aircraft-seat-reservation.app.lan:4445",
+		AllowedMethods: []string{
+			http.MethodGet, http.MethodPost, http.MethodPut, http.MethodPatch, http.MethodHead,
 		},
+		AllowedOrigins:   []string{"*"},
 		AllowCredentials: true,
+		AllowedHeaders: []string{
+			"Content-Type", "Authorization", "Accept", "Origin", "X-Requested-With",
+			// Add SSE-specific headers if needed
+			"Cache-Control", "X-Requested-With",
+		},
+		ExposedHeaders: []string{
+			"Content-Type", "Cache-Control",
+			// Expose SSE-specific headers if needed
+		},
 	}).Handler(mux)
-	
 
 	log.Printf("connect to https://%s/ for GraphQL playground", listenAddr)
 

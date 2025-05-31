@@ -130,6 +130,16 @@ curl --http3 -vk https://graphql-gateway.app.lan:4444/
 - The `-v` flag enables verbose output, so you can see if HTTP/3 is negotiated.
 - If your system `curl` does not support `--http3`, install a recent version via [Homebrew](https://brew.sh/) or build from source.
 
+### Using curl to test Seat Status Subscription over HTTP/3 and SSE:
+
+```sh
+curl --http3 -N -kv \
+  -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
+  -X POST https://graphql-gateway.app.lan:4444/graphql \
+  -d '{"query":"subscription { seatStatusUpdated { rowNumber seatLetter occupied } }"}'
+```
+
 #### Using a Custom CA with curl
 
 If you want curl to trust your mkcert-generated CA instead of using `-k`, use the `--cacert` parameter.  

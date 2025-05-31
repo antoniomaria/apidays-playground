@@ -1,0 +1,5 @@
+curl --http3 -N -kv \
+  -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
+  -X POST https://graphql-gateway.app.lan:4444/graphql \
+  -d '{"query":"subscription { seatStatusUpdated { rowNumber seatLetter occupied } }"}'

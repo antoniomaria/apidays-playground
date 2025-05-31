@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"graphql-gateway/graph/model"
 	"sync"
+	"time"
 )
 
 // In-memory seat map for demonstration purposes
@@ -16,6 +17,15 @@ var (
 	seatMap   = make(map[string]*model.SeatStatus)
 	seatMapMu sync.Mutex
 )
+
+func init() {
+	// Initialize seatMap with 3 specific entries for demonstration
+	seatMapMu.Lock()
+	defer seatMapMu.Unlock()
+	seatMap["1-A"] = &model.SeatStatus{RowNumber: 1, SeatLetter: "A", Occupied: false}
+	seatMap["1-B"] = &model.SeatStatus{RowNumber: 1, SeatLetter: "B", Occupied: true}
+	seatMap["2-A"] = &model.SeatStatus{RowNumber: 2, SeatLetter: "A", Occupied: false}
+}
 
 // UpdateSeatStatus is the resolver for the updateSeatStatus field.
 func (r *mutationResolver) UpdateSeatStatus(ctx context.Context, rowNumber int32, seatLetter *string, occupied bool) (*bool, error) {
@@ -57,6 +67,7 @@ func (r *queryResolver) SeatStatus(ctx context.Context, rowNumber int32, seatLet
 }
 
 // SeatStatusUpdated is the resolver for the seatStatusUpdated field.
+/*
 func (r *subscriptionResolver) SeatStatusUpdated(ctx context.Context) (<-chan *model.SeatStatus, error) {
 	// For demonstration, this will just send a dummy update and close the channel.
 	ch := make(chan *model.SeatStatus, 1)
@@ -69,6 +80,34 @@ func (r *subscriptionResolver) SeatStatusUpdated(ctx context.Context) (<-chan *m
 		}
 	}()
 	return ch, nil
+}*/
+
+func (r *subscriptionResolver) SeatStatusUpdated(ctx context.Context) (<-chan *model.SeatStatus, error) {
+
+	fmt.Println("Subscription started for seat status updates.")
+	ch := make(chan *model.SeatStatus, 1)
+	// Simulate a seat status update every 5 seconds
+	go func() {
+		defer close(ch)
+		for {
+			seatMapMu.Lock()
+			for _, seat := range seatMap {
+				ch <- seat
+			}
+			seatMapMu.Unlock()
+			// Wait for 5 seconds before sending the next update
+			select {
+			case <-ctx.Done():
+				// Exit on cancellation
+				fmt.Println("Subscription closed.")
+				return
+			case <-time.After(5 * time.Second):
+			}
+		}
+	}()
+
+	return ch, nil
+
 }
 
 // Mutation returns MutationResolver implementation.
